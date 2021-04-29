@@ -1,97 +1,81 @@
-import admin
 from net.activForwLinux import activarForwLinux
-from com import funcionesCom
+from com.GUI import GUI
 from net import funcionesNet
-import platform
 import sys
 import ctypes
 import os
 
 if __name__ == '__main__':
-    # Verificamos si CMD es admin
+
+    # It must be an admin console
     try:
         isAdmin = os.getuid() == 0
     except AttributeError:
         isAdmin = ctypes.windll.shell32.IsUserAnAdmin() != 0
 
     if not isAdmin:
-        print('Ejecute este programa con derechos de administrador...')
+        print('Run this program as admin...')
         exit(-1)
 
-    # Verificamos args.
     if len(sys.argv) < 2 or len(sys.argv) > 5:
-        funcionesCom.presentUso()
-        exit(0)
+        GUI.showUsage()
+        exit(-1)
 
-    # Mostramos ayuda.
     if sys.argv[1] == '-h':
-        funcionesCom.presentAyuda()
-        exit(0)
+        GUI.showMenu()
+        exit(-1)
 
-    # Muestra MAC de interfaz local principal.
+    # Gets MAC address of the user's default NIC
     elif sys.argv[1] == '-mac':
         mac = funcionesNet.obtMacLcl()
         if mac:
-            print(f'MAC: {mac}')
-        exit(0)
+            print(mac)
 
-    # Activar port forwarding en el equipo (Solo Linux).
-    elif sys.argv[1] == '-pF':
-        os = platform.system()
-
-        if os == "Linux":
-            # Activamos port forwarding.
-            print('Activando port forwarding...')
-            activarForwLinux()
-        else:
-            print('Configuración disponible sólo para Linux...')
-        exit(0)
-
-    # Verificar si la NIC de un equipo esta en modo promiscuo.
+    # Checks if a host's NIC is in promiscuos mode based on IP
     elif sys.argv[1] == '-chkProm':
         if len(sys.argv) != 3:
-            print('Uso: spufi.py -chkProm <ip>')
-            exit('-1')
+            print('Usage: spufi.py -chkProm <ip>')
+            exit(-1)
 
         ip = sys.argv[2].strip()
         funcionesNet.chkPromiscIP(ip)
 
-    # Obtiene la direccion MAC de una NIC en base a su IP.
-    elif sys.argv[1] == '-macIp':
+    # Gets MAC address of a host based on it's IP
+    elif sys.argv[1] == '-macIP':
         if len(sys.argv) != 3:
-            print('Uso: spufi.py -macIp <ip>')
+            print('Usage: spufi.py -macIp <ip>')
             exit(-1)
 
         ip = sys.argv[2]
         mac = funcionesNet.obtMacIP(ip)
 
         if mac:
-            prov = funcionesNet.proveeNic(mac)  # Tratamos de obtener proveedor
+            prov = funcionesNet.proveeNic(mac)  # Try to find NIC manufacturer
             if prov:
-                print(f'La MAC de {ip} es {mac} ({prov})')
+                print(f'{ip} => {mac} ({prov})')
             else:
-                print(f'La MAC de {ip} es {mac}')
+                print(f'{ip} => {mac}')
         else:
-            print('No se pudo obtener la MAC...')
+            print('Couldn\'t get MAC address...')
 
-    # Escanea todos los hosts de la red local.
+    # Gets local network hosts
     elif sys.argv[1] == '-s':
         funcionesNet.escanHostsLcl()
 
-
-    # Envenena la tabla ARP (Poison ARP) de un host. Necesita IP src y dst.
-    elif sys.argv[1] == '-pArp':
+    # Poisons ARP table of the router allowing you to inpersonate another host
+    elif sys.argv[1] == '-pARP':
         if len(sys.argv) != 3:
-            print('Uso: spufi.py -macIp <ip src> <ip src>')
+            print('Usage: spufi.py -macIp <ip src> <ip src>')
             exit(-1)
 
         ip1 = sys.argv[2]
 
         funcionesNet.arpPoison(ip1)
 
-    elif sys.argv[1] == '-p':
+    # Gets name of a host based on IP
+    elif sys.argv[1] == '-host':
         if len(sys.argv) != 3:
-            print('Uso: spufi.py -p <ip>')
+            print('Usage: spufi.py -p <ip>')
             exit(-1)
 
         result = funcionesNet.hostnameXIp(sys.argv[2])
@@ -99,8 +83,7 @@ if __name__ == '__main__':
         if result:
             print(result)
         else:
-            print('No se pudo obtener hostname')
-
+            print('Couldn\'t get the hostname')
 
     else:
-        print('Opción inválida')
+        print('Invalid option')
