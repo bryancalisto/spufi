@@ -25,7 +25,7 @@ class GUI():
         print(f'\n|--------------------------- {GUI.yellow("Spufi")} ---------------------------|\n')
         print(GUI.yellow('Options:'))
         print(f'\t{GUI.yellow("-h:")}\tShow this help menu.')
-        print(f'\t{GUI.yellow("-mac:")}\tShow MAC address of this device default NIC.')
+        print(f'\t{GUI.yellow("-NIC:")}\tShow info about your device\'s NICs.')
         print(f'\t{GUI.yellow("-macIP:")}\tShow MAC address of a host\'s NIC based on IP.')
         print(f'\t{GUI.yellow("-s:")}\tShow the IP and MAC address of all the network hosts.')
         print(f'\t{GUI.yellow("-pARP:")}\tPoison the ARP table of a host given it\'s IP and some src and dst IP.')
