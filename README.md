@@ -1,2 +1,2 @@
 # spufi
-CLI network spoofer made with Python and Scapy.
+CLI network spoofer (and other tools) made with Python and Scapy.
