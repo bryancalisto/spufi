@@ -2,10 +2,13 @@ import time
 import socket
 import subprocess
 import sys
+from json import JSONDecodeError
 from pip._vendor import requests
 from scapy.config import conf
 from scapy.layers.inet import IP
 from scapy.layers.l2 import Ether, ARP, getmacbyip
+from scapy.layers.inet import ICMP, sr1
+from scapy.all import arping
 from scapy.sendrecv import srp, send
 from com.exceptions import InvalidIPv4Exception
 from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
@@ -40,24 +43,21 @@ class CmnNet:
 
     @staticmethod
     def getMACByIP(ip):
-        arp = ARP(op=1, pdst=ip)  # (who has...)
-
         try:
-            # Flood the network
-            broadcast = Ether(dst='ff:ff:ff:ff:ff:ff')
+            ans, unans = arping(ip, retry=3)
+            for snd, rcv in ans:
+                return rcv.sprintf(r"%Ether.src%")
 
-            # Check if the answers have the MAC
-            received, unans = srp(broadcast / arp, timeout=4, verbose=False)
+            subprocess.run(['powershell.exe', f'ping {ip}'], capture_output=False, shell=False)
+            p = subprocess.run(['powershell.exe', f'arp -a | findstr {ip}'], capture_output=True)
+            arpInfo = p.stdout.decode('utf-8').split()
 
-            mac = unans[0].hwsrc
-            return mac
+            if len(arpInfo) > 1:
+                return arpInfo[1]
 
-        except IndexError:
-            mac = CmnNet.getMACByIP(ip)
-            if mac:
-                return mac
-            else:
-                raise NetworkException()
+            return None
+        except:
+            raise NetworkException()
 
     @staticmethod
     def chkIsPromiscuousByIP(ip):
@@ -86,8 +86,8 @@ class CmnNet:
             data = requests.get(url).json()[0]
             # print(data['company'] + ' - ' + data['country']) #DEBUG
             return data['company'] + ' - ' + data['country']
-        except:
-            raise NoInternetException()
+        except JSONDecodeError:
+            return 'Vendor not detected'
 
     # Gets hostname by IP
     # DOES NOT WORK YET

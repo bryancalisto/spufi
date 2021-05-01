@@ -5,9 +5,11 @@ from net.attacks import Attacks
 import sys
 import ctypes
 import os
+import logging
 from com.exceptions import *
 
 if __name__ == '__main__':
+    logging.getLogger('scrapy').propagate = False
 
     # It must be an admin console
     try:
@@ -49,14 +51,13 @@ if __name__ == '__main__':
             print('Usage: spufi.py -macIp <ip>')
             exit(-1)
 
-        mac = CmnNet.getMACByIP(sys.argv[2])
+        ip = sys.argv[2]
+        mac = CmnNet.getMACByIP(ip)
 
         if mac:
-            prov = CmnNet.getNICVendor(mac)  # Try to find NIC manufacturer
-            if prov:
-                print(f'{ip} => {mac} ({prov})')
-            else:
-                print(f'{ip} => {mac}')
+            mac = mac.replace('-', ':')
+            prov = CmnNet.getNICVendor(mac)  # Try to find NIC vendor
+            print(f'{ip} => {mac} ({prov})')
         else:
             print('Couldn\'t get MAC address...')
 
