@@ -10,14 +10,16 @@ class HostScanner:
     @staticmethod
     def scanWithARP():
         hosts = []
+        ipPattern = re.compile('\d+\.\d+\.\d+\.')
+        hostPattern = re.compile('\d+$')
 
         try:
-            ipPattern = re.compile('\d+\.\d+\.\d+\.')
             ipPrefix = ipPattern.search(CmnNet.getLocalDefaultIP()).group(0)
             ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ipPrefix + "0/24"), timeout=3, iface="Wi-Fi")
 
             for snt, rcv in ans:
-                hosts.append({"ip": rcv.sprintf(r"%ARP.psrc%"), 'mac': rcv.sprintf(r"%Ether.hwsrc%"), host: })
+                hosts.append({"ip": rcv.sprintf(r"%ARP.psrc%"), 'mac': rcv.sprintf(r"%Ether.hwsrc%"),
+                              "host": int(hostPattern.search(rcv.sprintf(r"%ARP.psrc%")).group(0))})
 
         except:
             raise NetworkException()

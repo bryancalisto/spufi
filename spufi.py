@@ -7,6 +7,7 @@ import ctypes
 import os
 import logging
 from com.exceptions import *
+from com.utils import Utils
 
 if __name__ == '__main__':
     logging.getLogger('scrapy').propagate = False
@@ -64,7 +65,12 @@ if __name__ == '__main__':
     # Gets local network hosts
     elif sys.argv[1] == '-s':
         hosts = HostScanner.scanWithARP()
+
+        # Order ascendingly
+        Utils.sortListOfObj(hosts, 'host', True)
+
         print(f'Detected hosts: {len(hosts)}')
+
         for h in hosts:
             print(f'{h["ip"]} - {h["mac"]}')
 
