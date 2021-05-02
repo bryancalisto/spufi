@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     # Gets local network hosts
     elif sys.argv[1] == '-s':
-        hosts = HostScanner.scan()
+        hosts = HostScanner.scanWithARP()
         print(f'Detected hosts: {len(hosts)}')
         for h in hosts:
             print(f'{h["ip"]} - {h["mac"]}')
@@ -92,3 +92,18 @@ if __name__ == '__main__':
 
     else:
         print('Invalid option')
+
+# TODO
+# P: Pending
+# C: Complete
+# A: Abandoned
+#
+# - (P) Build getHostnameByIP method.
+#
+# - (P) Detect user default NIC and set it globally in all network
+# related processes (I do not know why this is not working by default).
+#
+# - (P) Allow user to change MAC address of a NIC.
+#
+# - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
+# or other socket oriented techniques. This will ensure most host discovered.

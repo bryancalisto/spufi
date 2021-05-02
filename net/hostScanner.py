@@ -1,26 +1,24 @@
-from scapy.config import conf
-from scapy.layers.inet import IP
-from scapy.layers.l2 import Ether, ARP, getmacbyip
-from scapy.sendrecv import srp, send
+from scapy.layers.inet import IP, ICMP, TCP
+from scapy.layers.l2 import Ether, ARP, arping
+from scapy.all import srp, send, sr1, sr
 from com.exceptions import NetworkException
+from net.cmnNet import CmnNet
+import re
 
 
 class HostScanner:
     @staticmethod
-    def scan():
+    def scanWithARP():
+        hosts = []
+
         try:
-            ip = IP().src
+            ipPattern = re.compile('\d+\.\d+\.\d+\.')
+            ipPrefix = ipPattern.search(CmnNet.getLocalDefaultIP()).group(0)
+            ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ipPrefix + "0/24"), timeout=3, iface="Wi-Fi")
 
-            ip += '/24'
-            arp = ARP(pdst=ip)  # (who has...)
-            broadcast = Ether(dst='ff:ff:ff:ff:ff:ff')
-            pack = broadcast / arp
+            for snt, rcv in ans:
+                hosts.append({"ip": rcv.sprintf(r"%ARP.psrc%"), 'mac': rcv.sprintf(r"%Ether.hwsrc%"), host: })
 
-            resp = srp(pack, timeout=3, verbose=False)[0]
-
-            hosts = []
-            for sent, received in resp:
-                hosts.append({'ip': received.psrc, 'mac': received.hwsrc})
         except:
             raise NetworkException()
 
