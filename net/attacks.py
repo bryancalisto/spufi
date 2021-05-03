@@ -1,12 +1,17 @@
-import time
-import socket
-from pip._vendor import requests
-from scapy.config import conf
-from scapy.layers.inet import IP
-from scapy.layers.l2 import Ether, ARP, getmacbyip
-from scapy.sendrecv import srp, send
-from net.cmnNet import CmnNet
-from com.exceptions import NetworkException, InvalidIPv4Exception
+from com.GUI import GUI
+
+try:
+    import time
+    import socket
+    import requests
+    from scapy.config import conf
+    from scapy.layers.inet import IP
+    from scapy.layers.l2 import Ether, ARP, getmacbyip
+    from scapy.sendrecv import srp, send
+    from net.cmnNet import CmnNet
+    from com.exceptions import NetworkException, InvalidIPv4Exception
+except ModuleNotFoundError as e:
+    GUI.killWithNoDependencies(e)
 
 
 class Attacks:

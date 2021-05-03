@@ -1,13 +1,18 @@
 from com.GUI import GUI
-from net.cmnNet import CmnNet
-from net.hostScanner import HostScanner
-from net.attacks import Attacks
-import sys
-import ctypes
-import os
-import logging
-from com.exceptions import *
-from com.utils import Utils
+
+try:
+    import logging
+    import os
+    import ctypes
+    import sys
+    from com.utils import Utils, ProgramManager
+    from com.exceptions import *
+    from net.attacks import Attacks
+    from net.hostScanner import HostScanner
+    from net.cmnNet import CmnNet
+    from com.GUI import GUI
+except ModuleNotFoundError as e:
+    GUI.killWithNoDependencies(e)
 
 if __name__ == '__main__':
     logging.getLogger('scrapy').propagate = False
@@ -104,6 +109,8 @@ if __name__ == '__main__':
 # C: Complete
 # A: Abandoned
 #
+# - (P) Add unit testing.
+#
 # - (P) Build getHostnameByIP method.
 #
 # - (P) Detect user default NIC and set it globally in all network
@@ -113,3 +120,8 @@ if __name__ == '__main__':
 #
 # - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
 # or other socket oriented techniques. This will ensure most host discovered.
+#
+# - (P) Tell user to use python > 3.8 . If user is not using it, kill the program.
+#
+# - (P) Make a mechanism that makes sure the venv is active. If it's not inactive, activate it,
+# if it is active, don't do anything. Aditionally, consider killing the venv when the program finishes.

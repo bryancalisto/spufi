@@ -1,17 +1,22 @@
-import time
-import socket
-import subprocess
-import sys
-from json import JSONDecodeError
-from pip._vendor import requests
-from scapy.config import conf
-from scapy.layers.inet import IP
-from scapy.layers.l2 import Ether, ARP, getmacbyip
-from scapy.layers.inet import ICMP, sr1
-from scapy.all import arping
-from scapy.sendrecv import srp, send
-from com.exceptions import InvalidIPv4Exception
-from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
+try:
+    import time
+    import socket
+    import subprocess
+    import sys
+    from json import JSONDecodeError
+    import requests
+    from scapy.config import conf
+    from scapy.layers.inet import IP
+    from scapy.layers.l2 import Ether, ARP, getmacbyip
+    from scapy.layers.inet import ICMP, sr1
+    from scapy.all import arping
+    from scapy.sendrecv import srp, send
+    from com.exceptions import InvalidIPv4Exception
+    from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
+except e:
+    print('Posible lack of dependencies. Don\'t forget to activate your virtual environment!')
+    print(e)
+    exit(-1)
 
 
 ### Common network operations ###

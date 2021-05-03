@@ -31,3 +31,9 @@ class GUI():
         print(f'\t{GUI.yellow("-pARP:")}\tPoison the ARP table of a host given it\'s IP and some src and dst IP.')
         print(f'\t{GUI.yellow("-host:")}\tShow hostname based on IP.')
         print()
+
+    @staticmethod
+    def killWithNoDependencies(e):
+        print('Lack of dependencies. Don\'t forget to activate your virtual environment!')
+        print(e)
+        exit(-1)

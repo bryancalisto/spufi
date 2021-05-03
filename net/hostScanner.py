@@ -1,9 +1,14 @@
-from scapy.layers.inet import IP, ICMP, TCP
-from scapy.layers.l2 import Ether, ARP, arping
-from scapy.all import srp, send, sr1, sr
-from com.exceptions import NetworkException
-from net.cmnNet import CmnNet
-import re
+from com.GUI import GUI
+
+try:
+    from scapy.layers.inet import IP, ICMP, TCP
+    from scapy.layers.l2 import Ether, ARP, arping
+    from scapy.all import srp, send, sr1, sr
+    from com.exceptions import NetworkException
+    from net.cmnNet import CmnNet
+    import re
+except ModuleNotFoundError as e:
+    GUI.killWithNoDependencies(e)
 
 
 class HostScanner:
