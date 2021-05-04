@@ -1,12 +1,13 @@
 from com.GUI import GUI
 
 try:
+    import re
     from scapy.layers.inet import IP, ICMP, TCP
     from scapy.layers.l2 import Ether, ARP, arping
     from scapy.all import srp, send, sr1, sr
     from com.exceptions import NetworkException
     from net.cmnNet import CmnNet
-    import re
+    from com.programManager import programMgr
 except ModuleNotFoundError as e:
     GUI.killWithNoDependencies(e)
 
@@ -20,7 +21,7 @@ class HostScanner:
 
         try:
             ipPrefix = ipPattern.search(CmnNet.getLocalDefaultIP()).group(0)
-            ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ipPrefix + "0/24"), timeout=3, iface="Wi-Fi")
+            ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ipPrefix + "0/24"), timeout=3, iface=programMgr.mainNICName)
 
             for snt, rcv in ans:
                 hosts.append({"ip": rcv.sprintf(r"%ARP.psrc%"), 'mac': rcv.sprintf(r"%Ether.hwsrc%"),

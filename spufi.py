@@ -3,29 +3,25 @@ from com.GUI import GUI
 try:
     import logging
     import os
-    import ctypes
     import sys
-    from com.utils import Utils, ProgramManager
+    from com.utils import Utils
     from com.exceptions import *
     from net.attacks import Attacks
     from net.hostScanner import HostScanner
     from net.cmnNet import CmnNet
     from com.GUI import GUI
+    from com.programManager import programMgr
 except ModuleNotFoundError as e:
     GUI.killWithNoDependencies(e)
 
 if __name__ == '__main__':
-    if sys.version_info < (3, 8):
+
+    if not programMgr.isValidPythonVersion():
         print('Please, use python 3.8.x')
         exit(-1)
 
     # It must be an admin console
-    try:
-        isAdmin = os.getuid() == 0
-    except AttributeError:
-        isAdmin = ctypes.windll.shell32.IsUserAnAdmin() != 0
-
-    if not isAdmin:
+    if not programMgr.isAdminConsole():
         print('Run this program as admin...')
         exit(-1)
 
@@ -33,6 +29,15 @@ if __name__ == '__main__':
         GUI.showUsage()
         exit(-1)
 
+    # We need to know what is the default NIC
+    programMgr.getDefaultNICData()
+    if not programMgr.mainNIC or not programMgr.mainNICName:
+        print('Could\'t get this device\'s default NIC data')
+        exit(-1)
+
+    ### PROGRAM OPTIONS ###
+
+    # Shows help menu
     if sys.argv[1] == '-h':
         GUI.showMenu()
         exit(-1)
@@ -111,19 +116,18 @@ if __name__ == '__main__':
 # C: Complete
 # A: Abandoned
 #
-# - (P) Add unit testing.
-#
 # - (P) Build getHostnameByIP method. (Currently, don't know how to make this).
 #
-# - (P) Detect user default NIC and set it globally in all network
-# related processes (I do not know why this is not working by default).
+# - (C) Detect user default NIC and set it globally in all network
+# related processes (I do not know why this is not working by default). This is almost done,
+# but ProgramManager class should be made singleton. This is because this class constructor is
+# the one that gets the default NIC and sets it as a property of the class. So to use it efficiently and cleanly,
+# make it singleton.
 #
 # - (P) Allow user to change MAC address of a NIC.
 #
 # - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
 # or other socket oriented techniques. This will ensure most host discovered.
-#
-# - (C) Tell user to use python > 3.8 . If user is not using it, kill the program.
 #
 # - (P) Make a mechanism that makes sure the venv is active. If it's not inactive, activate it,
 # if it is active, don't do anything. Aditionally, consider killing the venv when the program finishes.

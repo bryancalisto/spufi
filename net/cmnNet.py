@@ -1,6 +1,7 @@
 from com.GUI import GUI
 
 try:
+    import re
     import time
     import socket
     import subprocess
@@ -9,12 +10,13 @@ try:
     import requests
     from scapy.config import conf
     from scapy.layers.inet import IP
-    from scapy.layers.l2 import Ether, ARP, getmacbyip
+    from scapy.layers.l2 import Ether, ARP
     from scapy.layers.inet import ICMP, sr1
-    from scapy.all import arping, get_if_list
+    from scapy.all import arping
     from scapy.sendrecv import srp, send
     from com.exceptions import InvalidIPv4Exception
     from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
+    from com.programManager import programMgr
 except e:
     GUI.killWithNoDependencies(e)
 
@@ -49,7 +51,7 @@ class CmnNet:
     @staticmethod
     def getMACByIP(ip):
         try:
-            ans, unans = arping(ip, retry=3)
+            ans, unans = arping(ip, retry=3, iface=programMgr.mainNICName)
             for snd, rcv in ans:
                 return rcv.sprintf(r"%Ether.src%")
 
@@ -71,8 +73,9 @@ class CmnNet:
             raise InvalidIPv4Exception(ip)
 
         try:
-            # Send ARP packet to host by IP with an invalid MAC
-            resp = srp(Ether(dst='ff:ff:ff:ff:ff:fe')/ARP(pdst=ip), timeout=3, verbose=False)[0]
+            # Send ARP packet to host by IP with an practically not existant MAC
+            resp = srp(Ether(dst='ff:ff:ff:ff:ff:fe')
+                       / ARP(pdst=ip), timeout=3, verbose=False, iface=programMgr.mainNICName)[0]
         except:
             raise NetworkException()
 
