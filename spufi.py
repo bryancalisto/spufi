@@ -15,7 +15,9 @@ except ModuleNotFoundError as e:
     GUI.killWithNoDependencies(e)
 
 if __name__ == '__main__':
-    logging.getLogger('scrapy').propagate = False
+    if sys.version_info < (3, 8):
+        print('Please, use python 3.8.x')
+        exit(-1)
 
     # It must be an admin console
     try:
@@ -111,7 +113,7 @@ if __name__ == '__main__':
 #
 # - (P) Add unit testing.
 #
-# - (P) Build getHostnameByIP method.
+# - (P) Build getHostnameByIP method. (Currently, don't know how to make this).
 #
 # - (P) Detect user default NIC and set it globally in all network
 # related processes (I do not know why this is not working by default).
@@ -121,7 +123,7 @@ if __name__ == '__main__':
 # - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
 # or other socket oriented techniques. This will ensure most host discovered.
 #
-# - (P) Tell user to use python > 3.8 . If user is not using it, kill the program.
+# - (C) Tell user to use python > 3.8 . If user is not using it, kill the program.
 #
 # - (P) Make a mechanism that makes sure the venv is active. If it's not inactive, activate it,
 # if it is active, don't do anything. Aditionally, consider killing the venv when the program finishes.
