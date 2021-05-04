@@ -1,3 +1,5 @@
+from com.GUI import GUI
+
 try:
     import time
     import socket
@@ -9,14 +11,12 @@ try:
     from scapy.layers.inet import IP
     from scapy.layers.l2 import Ether, ARP, getmacbyip
     from scapy.layers.inet import ICMP, sr1
-    from scapy.all import arping
+    from scapy.all import arping, get_if_list
     from scapy.sendrecv import srp, send
     from com.exceptions import InvalidIPv4Exception
     from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
 except e:
-    print('Posible lack of dependencies. Don\'t forget to activate your virtual environment!')
-    print(e)
-    exit(-1)
+    GUI.killWithNoDependencies(e)
 
 
 ### Common network operations ###
