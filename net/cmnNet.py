@@ -98,20 +98,12 @@ class CmnNet:
             return 'Vendor not detected'
 
     # Gets hostname by IP
-    # DOES NOT WORK YET
+    # PROVISIONAL SOLUTION (it actually shows the hostname in the result of the command)... Don't know how to solve it yet
     @staticmethod
     def getHostnameByIP(ip):
-        PORT = 5353  # Multicast DNS
-        for i in range(2):  # Try twice
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # IPv4, UDP
-                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Allow IP address reuse
-                s.bind(('224.0.0.251', PORT))
-                s.sendall(b'224.0.0.251')
-                print('llega')  # DEBUG
-                data = s.recv(1024)
-                print('Received', repr(data))  # DEBUG
-                s.close()
-                break
-            except:
-                raise NetworkException()
+        try:
+            # Hostname is shown when calling this method
+            arping(ip, retry=3, iface=programMgr.mainNICName)
+            return None
+        except:
+            raise NetworkException()

@@ -101,12 +101,7 @@ if __name__ == '__main__':
             print('Usage: spufi.py -p <ip>')
             exit(-1)
 
-        hName = CmnNet.getHostnameByIP(sys.argv[2])
-
-        if hName:
-            print(hName)
-        else:
-            print('Couldn\'t get the hostname')
+        CmnNet.getHostnameByIP(sys.argv[2])
 
     else:
         print('Invalid option')
