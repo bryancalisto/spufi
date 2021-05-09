@@ -15,6 +15,9 @@ except ModuleNotFoundError as e:
     GUI.killWithNoDependencies(e)
 
 if __name__ == '__main__':
+    if not programMgr.isVenvOn():
+        print('Please, activate the virtual environment')
+        exit(-1)
 
     if not programMgr.isValidPythonVersion():
         print('Please, use python 3.8.x')
@@ -103,6 +106,21 @@ if __name__ == '__main__':
 
         CmnNet.getHostnameByIP(sys.argv[2])
 
+    # Lets user change the MAC address of a NIC
+    elif sys.argv[1] == '-chMAC':
+        print('Beware that this function is supported by just some NICs')
+        if len(sys.argv) != 4:
+            print('Usage: spufi.py -chMAC <NIC_NAME> <NEW_MAC>')
+            exit(-1)
+
+        try:
+            CmnNet.changeMAC(sys.argv[2], sys.argv[3])
+        except InvalidMACException as e:
+            print(e)
+            exit(-1)
+        except SubprocessException as e:
+            print(e)
+            exit(-1)
     else:
         print('Invalid option')
 
@@ -111,18 +129,7 @@ if __name__ == '__main__':
 # C: Complete
 # A: Abandoned
 #
-# - (P) Build getHostnameByIP method. (Currently, don't know how to make this).
-#
-# - (C) Detect user default NIC and set it globally in all network
-# related processes (I do not know why this is not working by default). This is almost done,
-# but ProgramManager class should be made singleton. This is because this class constructor is
-# the one that gets the default NIC and sets it as a property of the class. So to use it efficiently and cleanly,
-# make it singleton.
-#
-# - (P) Allow user to change MAC address of a NIC.
-#
 # - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
 # or other socket oriented techniques. This will ensure most host discovered.
 #
-# - (P) Make a mechanism that makes sure the venv is active. If it's not inactive, activate it,
-# if it is active, don't do anything. Aditionally, consider killing the venv when the program finishes.
+# - (P) Make a script to install all dependencies with pip freeze and requirements.txt

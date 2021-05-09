@@ -15,7 +15,7 @@ try:
     from scapy.all import arping
     from scapy.sendrecv import srp, send
     from com.exceptions import InvalidIPv4Exception
-    from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException
+    from com.exceptions import NetworkException, InvalidIPv4Exception, NoInternetException, InvalidMACException, SubprocessException
     from com.programManager import programMgr
 except e:
     GUI.killWithNoDependencies(e)
@@ -107,3 +107,17 @@ class CmnNet:
             return None
         except:
             raise NetworkException()
+
+    @staticmethod
+    def changeMAC(nicName, nicNewMAC):
+        match = re.match(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$', nicNewMAC)
+
+        if match is None:
+            raise InvalidMACException(nicNewMAC)
+
+        nicNewMAC = str.replace(nicNewMAC, ':', '-')
+
+        try:
+            subprocess.run(['powershell.exe', f'Set-NetAdapter -Name "{nicName}" -MacAddress "{nicNewMAC}"'])
+        except subprocess.CalledProcessError as e:
+            raise SubprocessException(e)
