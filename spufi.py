@@ -139,5 +139,3 @@ if __name__ == '__main__':
 # C: Complete
 # A: Abandoned
 #
-# - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
-# or other socket oriented techniques. This will ensure most host discovered.
