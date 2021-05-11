@@ -31,3 +31,23 @@ class HostScanner:
             raise NetworkException()
 
         return hosts
+
+    def scanWithTCP():
+        hosts = []
+        ipPattern = re.compile('\d+\.\d+\.\d+\.')
+        hostPattern = re.compile('\d+$')
+
+        try:
+            ipPrefix = ipPattern.search(CmnNet.getLocalDefaultIP()).group(0)
+            ans, unans = sr(IP(dst=ipPrefix + '1')/TCP(dport=80, flags="S"), iface=programMgr.mainNICName, timeout=5)
+
+            i = 0
+            for snt, rcv in ans:
+                hosts.append({"ip": rcv.sprintf(r"%IP.src%"), 'mac': '',
+                              "host": 255 + i})
+                i += 1
+
+        except:
+            raise NetworkException()
+
+        return hosts

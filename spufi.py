@@ -79,7 +79,17 @@ if __name__ == '__main__':
 
     # Gets local network hosts
     elif sys.argv[1] == '-s':
-        hosts = HostScanner.scanWithARP()
+        ips = []
+        hostsARP = HostScanner.scanWithARP()
+        hostsTCP = HostScanner.scanWithTCP()
+        hosts = hostsARP + hostsTCP
+        # Remove repeated hosts
+        i = 0
+        for h in hosts:
+            if h['ip'] in ips:
+                del hosts[i]
+            ips.append(h['ip'])
+            i += 1
 
         # Order ascendingly
         Utils.sortListOfObj(hosts, 'host', True)
@@ -131,5 +141,3 @@ if __name__ == '__main__':
 #
 # - (P) Enhance host discovery with alternatives to ARP technique. Maybe TCP SYN
 # or other socket oriented techniques. This will ensure most host discovered.
-#
-# - (P) Make a script to install all dependencies with pip freeze and requirements.txt
